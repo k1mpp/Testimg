@@ -13,4 +13,77 @@
       justify-content: center;
       min-height: 100vh;
       margin: 0;
-      background: linear-gradient(135deg, #f0f4ff, #
+      background: linear-gradient(135deg, #f0f4ff, #d9e4ff);
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 40px;
+    }
+
+    button {
+      padding: 15px 30px;
+      margin: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    #google-login {
+      background-color: #4285F4;
+      color: white;
+    }
+    #google-login:hover {
+      background-color: #357ae8;
+    }
+
+    #pay-button {
+      background-color: #FF7F50;
+      color: white;
+    }
+    #pay-button:hover {
+      background-color: #ff6347;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>XD 스타일 샘플 페이지</h1>
+
+  <!-- 구글 로그인 버튼 -->
+  <button id="google-login">구글로 로그인</button>
+
+  <!-- 결제 버튼 -->
+  <button id="pay-button">결제하기</button>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script>
+    const googleLoginBtn = document.getElementById('google-login');
+    googleLoginBtn.onclick = () => {
+      google.accounts.id.initialize({
+        client_id: 'YOUR_GOOGLE_CLIENT_ID',
+        callback: (response) => { alert('로그인 성공! 토큰: ' + response.credential); }
+      });
+      google.accounts.id.prompt();
+    };
+
+    const stripe = Stripe('YOUR_STRIPE_PUBLISHABLE_KEY');
+    const payButton = document.getElementById('pay-button');
+    payButton.onclick = async () => {
+      const { error } = await stripe.redirectToCheckout({
+        lineItems: [{ price: 'PRICE_ID', quantity: 1 }],
+        mode: 'payment',
+        successUrl: window.location.href + '?success=true',
+        cancelUrl: window.location.href + '?canceled=true',
+      });
+      if (error) alert(error.message);
+    };
+  </script>
+
+</body>
+</html>
